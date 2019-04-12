@@ -53,6 +53,9 @@ List::List(const List * _List)
 	}
 	if (_List->temp) delete _List;		// ist die Übergebene Liste eine temporäre Liste? -> aus Operator +
 }
+//////////////////
+//  here we go  //
+//////////////////
 
 List::~List()
 {
@@ -61,6 +64,21 @@ List::~List()
 /*
 	hier alle Knoten löschen, die im Objekt List allokiert wurden
 */
+    if (head_tail->next == head_tail || head_tail->next == nullptr) {
+        delete head_tail;
+    }else{
+        Node * tmp_ptr = head_tail;
+        Node * dele_ptr = nullptr;
+        
+        while (tmp_ptr->next != nullptr) {
+            dele_ptr = tmp_ptr;
+            tmp_ptr = tmp_ptr->next;
+            delete dele_ptr;
+        }
+        delete head_tail;
+        delete tmp_ptr;
+        delete dele_ptr;
+    }
 }
 
 void List::insertFront(int key)
@@ -194,7 +212,7 @@ int List::size(void)
 /*
 	Anzahl der Knoten in der Liste zurückgeben.
 */
-	return 0;
+	return list_size;
 }
 
 bool List::test(void)
