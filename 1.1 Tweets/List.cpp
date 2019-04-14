@@ -79,6 +79,7 @@ List::~List()
         delete tmp_ptr;
         delete dele_ptr;
 //      head_tail = head && tail??
+        // repository collaboration test from Johanna
     }
 }
 
