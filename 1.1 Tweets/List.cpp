@@ -59,7 +59,7 @@ List::List(const List * _List)
 
 List::~List()
 {
-	// Dekonstruktor
+	// Destruktor
 	// Alle Knoten der Liste müssen gelöscht werden, wenn die Liste gelöscht wird.
 /*
 	hier alle Knoten löschen, die im Objekt List allokiert wurden
@@ -69,7 +69,6 @@ List::~List()
     }else{
         Node * tmp_ptr = head_tail;
         Node * dele_ptr = nullptr;
-        
         while (tmp_ptr->next != nullptr) {
             dele_ptr = tmp_ptr;
             tmp_ptr = tmp_ptr->next;
@@ -78,14 +77,26 @@ List::~List()
         delete head_tail;
         delete tmp_ptr;
         delete dele_ptr;
-//      head_tail = head && tail??
-        // repository collaboration test from Johanna
+//      head_tail = Anker (zeigt auf Anfang & Ende)
     }
 }
 
 void List::insertFront(int key)
 {
 	// Einfügen eines neuen Knotens am Anfang der Liste
+    
+    Node * tmp_node;
+    if (head_tail->next == head_tail || head_tail->next == nullptr) { //leere Liste
+        tmp_node = new Node (key, head_tail->next, head_tail); //node->next, node->prev
+        head_tail->next = tmp_node;
+        head_tail->prev = tmp_node;
+    }else{
+        tmp_node = new Node (key, head_tail->next, head_tail);
+        tmp_node->next->prev = tmp_node;
+        head_tail->next = tmp_node;
+    }
+    list_size++;
+    
 /*
 	Einen neuen Knoten mit dem Schlüsselwert key am Anfang der Liste einfügen
 */
@@ -122,6 +133,18 @@ void List::insertFront(List * _List)
 void List::insertBack(int key)
 {
 	// Einfügen eines neuen Knotens am Ende der Liste
+    
+    Node * tmp_node;
+    if (head_tail->next == head_tail || head_tail->next == nullptr) { //leere Liste
+        tmp_node = new Node (key, head_tail, head_tail->prev); //node->next, node->prev
+        head_tail->next = tmp_node;
+        head_tail->prev = tmp_node;
+    }else{
+        tmp_node = new Node (key, head_tail, head_tail->prev);
+        tmp_node->prev->next = tmp_node;
+        head_tail->prev = tmp_node;
+    }
+    list_size++;
 /*
 	Einen neuen Knoten mit dem Schlüsselwert key am Ende der Liste einfügen
 */
@@ -160,22 +183,48 @@ bool List::getFront(int & key)
 	// entnehmen des Knotens am Anfang der Liste
 	// der Wert wird als Parameter zurückgegeben
 	// der Knoten wird entnommen
+    
+    Node * tmp_ptr = head_tail->next; //Zeiger auf erstes Element der Liste
+    if (head_tail->next != head_tail || head_tail->next != nullptr) {
+        key = tmp_ptr->key;
+        head_tail->next = tmp_ptr->next; //Verbindung zu zweitem Knoten
+        tmp_ptr->next->prev = head_tail; //Verbindung vom zweiten Knoten zu head
+        
+        delete tmp_ptr; //lšschen?
+        list_size--;
+        
+        return true;
+        
+    }
 /*
 	Der Wert des vorderen Schlüsselknotens wird rückgegeben und der Knoten gelöscht.
 	Die Methode del(key) darf nicht zum löschen benutzt werden.
 */
-	return false;
+    else {return false;}
 }
 
 bool List::getBack(int & key)
 {	// entnehmen des Knotens am Ende der Liste
 	// der Wert wird als Parameter zurückgegeben
 	// der Knoten wird entnommen
+    
+    Node * tmp_ptr = head_tail->prev; //Zeiger auf letztes Element der Liste
+    if (head_tail->prev != head_tail || head_tail->prev != nullptr) {
+        key = tmp_ptr->key;
+        head_tail->prev = tmp_ptr->prev; //Verbindung zu zweit-letztem Knoten
+        tmp_ptr->prev->next = head_tail; //Verbindung vom zweit-letzten Knoten zu tail
+        
+        delete tmp_ptr; //lšschen?
+        list_size--;
+        
+        return true;
+        
+    }
 /*
 	Der Wert des letzten Schlüsselknotens wird rückgegeben und der Knoten gelöscht.
 	Die Methode del(key) darf nicht zum löschen benutzt werden.
 */
-	return false;
+    else {return false;}
 }
 
 bool List::del(int key)
@@ -190,6 +239,16 @@ bool List::del(int key)
 bool List::search(int key)
 {
 	// suchen eines Knotens
+    
+    Node * tmp_ptr = head_tail->next;
+    for (tmp_ptr; tmp_ptr != head_tail; tmp_ptr = tmp_ptr->next) //? Fehlermeldungen
+    {
+        if (tmp_ptr->key == key)
+            
+            return true;
+            break;
+    }
+    
 /*
 	suchen ob ein Knoten mit dem Schlüssel key existiert.
 */
